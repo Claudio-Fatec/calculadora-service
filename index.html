@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Calculadora Microserviços</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f0f0f0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    .calculadora {
+      background: white;
+      padding: 20px;
+      border-radius: 15px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      width: 300px;
+    }
+
+    .calculadora h1 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    input, select, button {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 15px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+    }
+
+    button {
+      background-color: #28a745;
+      color: white;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    .resultado {
+      margin-top: 10px;
+      text-align: center;
+      font-size: 1.2em;
+      color: #333;
+    }
+  </style>
+</head>
+<body>
+  <div class="calculadora">
+    <h1>Calculadora</h1>
+    <input type="number" id="a" placeholder="Número A">
+    <input type="number" id="b" placeholder="Número B">
+    <select id="operador">
+      <option value="+">Somar (+)</option>
+      <option value="-">Subtrair (-)</option>
+      <option value="*">Multiplicar (*)</option>
+      <option value="/">Dividir (/)</option>
+    </select>
+    <button onclick="calcular()">Calcular</button>
+    <div class="resultado" id="resultado"></div>
+  </div>
+
+  <script>
+    async function calcular() {
+      const a = parseFloat(document.getElementById('a').value);
+      const b = parseFloat(document.getElementById('b').value);
+      const operador = document.getElementById('operador').value;
+
+      const resposta = await fetch('http://localhost:3000/calcular', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ a, b, operador })
+      });
+
+      const resultado = await resposta.json();
+
+      if (resposta.ok) {
+        document.getElementById('resultado').innerText = `Resultado: ${resultado.resultado}`;
+      } else {
+        document.getElementById('resultado').innerText = `Erro: ${resultado.erro}`;
+      }
+    }
+  </script>
+</body>
+</html>
